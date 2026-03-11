@@ -1,23 +1,23 @@
-import {BsSearch} from 'react-icons/bs'
+import { BsSearch } from 'react-icons/bs'
 
 import ProfileDetails from '../ProfileDetails'
 import './index.css'
 
 const FiltersGroup = props => {
   const onChangeSearchInput = event => {
-    const {changeSearchInput} = props
+    const { changeSearchInput } = props
     changeSearchInput(event)
   }
 
   const onEnterSearchInput = event => {
-    const {getJobs} = props
+    const { getJobs } = props
     if (event.key === 'Enter') {
       getJobs()
     }
   }
 
   const renderSearchInput = () => {
-    const {getJobs, searchInput} = props
+    const { getJobs, searchInput } = props
     return (
       <div className="search-input-container">
         <label htmlFor="searchInput" className="visually-hidden">
@@ -46,13 +46,13 @@ const FiltersGroup = props => {
   }
 
   const onSelectEmployeeType = event => {
-    const {changeEmployeeList} = props
+    const { changeEmployeeList } = props
     changeEmployeeList(event.target.value)
     // console.log(event.target.value)
   }
 
   const renderTypeOfEmployment = () => {
-    const {employmentTypesList} = props
+    const { employmentTypesList } = props
     return (
       <div className="employment-type-container">
         <h1 className="employment-type-heading"> Type of Employment</h1>
@@ -83,13 +83,13 @@ const FiltersGroup = props => {
   }
 
   const renderSalaryRange = () => {
-    const {salaryRangesList} = props
+    const { salaryRangesList } = props
     return (
       <div className="salary-range-container">
         <h1 className="salary-range-heading">Salary Range</h1>
         <ul className="salary-range-list-container">
           {salaryRangesList.map(eachSalary => {
-            const {changeSalary} = props
+            const { changeSalary } = props
             const onClickSalary = () => {
               changeSalary(eachSalary.salaryRangeId)
             }
@@ -119,6 +119,37 @@ const FiltersGroup = props => {
     )
   }
 
+  const onSelectLocation = event => {
+    const { changeLocationList } = props
+    changeLocationList(event.target.value)
+  }
+
+  const renderLocationsList = () => {
+    const { locationsList } = props
+    if (!locationsList) return null
+    return (
+      <div className="employment-type-container">
+        <h1 className="employment-type-heading">Locations</h1>
+        <ul className="employee-type-list-container">
+          {locationsList.map(eachLocation => (
+            <li className="employee-item" key={eachLocation.locationId}>
+              <input
+                type="checkbox"
+                id={eachLocation.locationId}
+                className="check-input"
+                value={eachLocation.locationId}
+                onChange={onSelectLocation}
+              />
+              <label htmlFor={eachLocation.locationId} className="check-label">
+                {eachLocation.label}
+              </label>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+
   return (
     <div className="filters-group-container">
       {renderSearchInput()}
@@ -127,6 +158,8 @@ const FiltersGroup = props => {
       {renderTypeOfEmployment()}
       <hr className="horizontal-line" />
       {renderSalaryRange()}
+      <hr className="horizontal-line" />
+      {renderLocationsList()}
     </div>
   )
 }

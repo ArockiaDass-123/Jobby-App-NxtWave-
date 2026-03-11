@@ -1,7 +1,7 @@
-import {Component} from 'react'
+import { Component } from 'react'
 import Cookies from 'js-cookie'
 import Loader from 'react-loader-spinner'
-import {BsSearch} from 'react-icons/bs'
+import { BsSearch } from 'react-icons/bs'
 import Header from '../Header'
 import FiltersGroup from '../FiltersGroup'
 import JobCard from '../JobCard'
@@ -46,6 +46,30 @@ const salaryRangesList = [
   },
 ]
 
+const locationsList = [
+  {
+    label: 'Hyderabad',
+    locationId: 'HYDERABAD',
+  },
+  {
+    label: 'Bangalore',
+    locationId: 'BANGALORE',
+  },
+  {
+    label: 'Chennai',
+    locationId: 'CHENNAI',
+  },
+  {
+    label: 'Delhi',
+    locationId: 'DELHI',
+  },
+  {
+    label: 'Mumbai',
+    locationId: 'MUMBAI',
+  },
+]
+
+
 const apiStatusConstants = {
   initial: 'INITIAL',
   success: 'SUCCESS',
@@ -60,6 +84,7 @@ class Jobs extends Component {
     employeeTypeList: [],
     minimumSalary: '',
     searchInput: '',
+    activeLocationList: [],
   }
 
   componentDidMount() {
@@ -70,7 +95,7 @@ class Jobs extends Component {
     this.setState({
       apiStatus: apiStatusConstants.inProgress,
     })
-    const {employeeTypeList, minimumSalary, searchInput} = this.state
+    const { employeeTypeList, minimumSalary, searchInput } = this.state
     // console.log(employeeTypeList)
     // employeeTypeList is empty array on initial page load when any input of type of employment is clicked
     // we are setting state of this type in changeEmployeeList function
@@ -113,13 +138,20 @@ class Jobs extends Component {
   }
 
   renderJobsList = () => {
-    const {jobsList} = this.state
-    const renderJobsList = jobsList.length > 0
+    const { jobsList, activeLocationList } = this.state
+    const filteredJobsList =
+      activeLocationList.length === 0
+        ? jobsList
+        : jobsList.filter(job =>
+          activeLocationList.includes(job.location.toUpperCase()),
+        )
+
+    const renderJobsList = filteredJobsList.length > 0
 
     return renderJobsList ? (
       <div className="all-jobs-container">
         <ul className="jobs-list">
-          {jobsList.map(job => (
+          {filteredJobsList.map(job => (
             <JobCard jobData={job} key={job.id} />
           ))}
         </ul>
@@ -168,7 +200,7 @@ class Jobs extends Component {
   )
 
   renderAllJobs = () => {
-    const {apiStatus} = this.state
+    const { apiStatus } = this.state
 
     switch (apiStatus) {
       case apiStatusConstants.success:
@@ -184,11 +216,11 @@ class Jobs extends Component {
 
   changeSalary = salaryRangeId => {
     // console.log(salary)
-    this.setState({minimumSalary: salaryRangeId}, this.getJobs)
+    this.setState({ minimumSalary: salaryRangeId }, this.getJobs)
   }
 
   changeEmployeeList = type => {
-    const {employeeTypeList} = this.state
+    const { employeeTypeList } = this.state
 
     const inputNotInList = employeeTypeList.filter(
       eachItem => eachItem === type,
@@ -207,12 +239,29 @@ class Jobs extends Component {
       )
       // console.log(filteredData)
 
-      this.setState({employeeTypeList: filteredData}, this.getJobs)
+      this.setState({ employeeTypeList: filteredData }, this.getJobs)
+    }
+  }
+
+  changeLocationList = type => {
+    const { activeLocationList } = this.state
+    const inputNotInList = activeLocationList.filter(
+      eachItem => eachItem === type,
+    )
+    if (inputNotInList.length === 0) {
+      this.setState(prevState => ({
+        activeLocationList: [...prevState.activeLocationList, type],
+      }))
+    } else {
+      const filteredData = activeLocationList.filter(
+        eachItem => eachItem !== type,
+      )
+      this.setState({ activeLocationList: filteredData })
     }
   }
 
   changeSearchInput = event => {
-    this.setState({searchInput: event.target.value})
+    this.setState({ searchInput: event.target.value })
   }
 
   onEnterSearchInput = event => {
@@ -222,7 +271,7 @@ class Jobs extends Component {
   }
 
   render() {
-    const {searchInput} = this.state
+    const { searchInput } = this.state
     return (
       <>
         <Header />
@@ -231,11 +280,13 @@ class Jobs extends Component {
             <FiltersGroup
               employmentTypesList={employmentTypesList}
               salaryRangesList={salaryRangesList}
+              locationsList={locationsList}
               changeSearchInput={this.changeSearchInput}
               searchInput={searchInput}
               getJobs={this.getJobs}
               changeSalary={this.changeSalary}
               changeEmployeeList={this.changeEmployeeList}
+              changeLocationList={this.changeLocationList}
             />
             <div className="search-input-jobs-list-container">
               <div className="search-input-container-desktop">

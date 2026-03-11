@@ -3,8 +3,11 @@
   justify-content: center;
   align-items: center;
   background-color: #121212;
-  /* height: 20vh; */
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
+
 .nav-content {
   display: flex;
   align-items: center;
@@ -45,11 +48,13 @@
   justify-content: center;
   align-items: center;
 }
+
 .nav-item-mobile-link {
   font-size: 24px;
   color: #ffffff;
   margin-right: 20px;
 }
+
 @media screen and (min-width: 768px) {
   .nav-mobile-btn {
     display: none;
@@ -96,6 +101,7 @@
   .nav-menu {
     display: none;
   }
+
   .nav-content {
     padding-top: 15px;
     padding-bottom: 15px;
@@ -117,12 +123,14 @@
   color: #ffffff;
   font-size: 20px;
 }
+
 .large-device-button-container {
   display: flex;
   justify-content: flex-end;
   /* background-color: white; */
   margin-top: 10px;
 }
+
 .logout-desktop-btn {
   font-family: 'Roboto';
   font-weight: 600;
